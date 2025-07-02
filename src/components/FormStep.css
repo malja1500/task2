@@ -82,4 +82,33 @@
       padding: 1rem;
     }
   }
+
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  
+  .submit-button {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    margin-top: 20px;
+  }
+  
+  .submit-button:hover {
+    background: linear-gradient(135deg, #66bb6a, #388e3c);
+    transform: translateY(-2px);
+  }
+  
+  .submit-button:active {
+    transform: translateY(0);
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+  }
   

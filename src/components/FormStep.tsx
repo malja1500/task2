@@ -8,10 +8,14 @@ interface Props {
 }
 
 const FormStep = ({ fields = [], onNext }: Props) => {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = (data: any) => {
-    console.log(" Form Step Submitted:", data);
+    console.log("Form Step Submitted:", data);
     onNext(data);
   };
 
@@ -25,11 +29,14 @@ const FormStep = ({ fields = [], onNext }: Props) => {
             !["widget", "captcha"].includes(field.type)
         )
         .map((field, index) => (
-          <FormField
-            key={field.name || `field-${index}`}
-            field={field}
-            register={register}
-          />
+          <div key={field.name || `field-${index}`}>
+            <FormField field={field} register={register} />
+            {errors[field.name] && (
+              <p className="error-message">
+                {field.label?.message || field.name} الزامی است
+              </p>
+            )}
+          </div>
         ))}
 
       {!fields.some(

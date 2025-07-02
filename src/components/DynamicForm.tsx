@@ -15,7 +15,7 @@ export const DynamicForm = () => {
         timeout: 10000, 
       })
       .then((res) => {
-        console.log("✅ API Config Loaded:", res.data);
+        console.log("API Config Loaded:", res.data);
         const registerSteps = res.data.form?.register || [];
         setSteps(registerSteps);
       })
@@ -25,16 +25,16 @@ export const DynamicForm = () => {
   }, []);
 
   if (steps.length === 0) {
-    return <p>⏳ Loading or Invalid Config...</p>;
+    return <p>Loading or Invalid Config...</p>;
   }
 
   const step = steps[currentStep];
   if (!step) {
-    return <p>❌ Step Not Found</p>;
+    return <p>Step Not Found</p>;
   }
 
   const handleNext = (stepData: any) => {
-    console.log("✅ Step Data:", stepData);
+    console.log("Step Data:", stepData);
     setFormData((prev) => ({ ...prev, ...stepData }));
 
     if (currentStep + 1 < steps.length) {
@@ -45,7 +45,7 @@ export const DynamicForm = () => {
         ...formData,
         ...stepData,
       };
-      console.log("🚀 Final Payload:", finalPayload);
+      console.log("Final Payload:", finalPayload);
     }
   };
 

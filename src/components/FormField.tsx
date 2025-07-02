@@ -6,6 +6,7 @@ interface Props {
 }
 
 const FormField = ({ field, register }: Props) => {
+  const required = field.required ?? field.rules?.required ?? true;
 
   if (["text", "email", "password"].includes(field.type)) {
     return (
@@ -13,20 +14,19 @@ const FormField = ({ field, register }: Props) => {
         <label>{field.label?.message || field.name}</label>
         <input
           type={field.type}
-          {...register(field.name, { required: field.required })}
+          {...register(field.name, { required })}
         />
       </div>
     );
   }
 
-  
   if (field.type === "checkbox") {
     return (
       <div className="form-field">
         <label>
           <input
             type="checkbox"
-            {...register(field.name, { required: field.required })}
+            {...register(field.name, { required })}
           />{" "}
           {field.label?.message || field.name}
         </label>
@@ -34,7 +34,6 @@ const FormField = ({ field, register }: Props) => {
     );
   }
 
-  
   if (field.type === "button" || field.type === "submit") {
     return (
       <div className="form-field">
@@ -46,18 +45,27 @@ const FormField = ({ field, register }: Props) => {
   }
 
   if (field.type === "select") {
-    const options = Array.isArray(field.options) ? field.options : [];
-    if (options.length === 0) {
-      console.warn(" WARNING: select field options fallback ", field);
+    let options: any[] = [];
+    if (Array.isArray(field.options)) {
+      options = field.options;
+    } else if (typeof field.options === "object" && field.options !== null) {
+      options = Object.entries(field.options).map(([value, label]) => ({
+        value,
+        label,
+      }));
+    } else {
+      console.warn("select field options fallback ", field);
       return null;
     }
+
     return (
       <div className="form-field">
         <label>{field.label?.message || field.name}</label>
-        <select {...register(field.name, { required: field.required })}>
-          {options.map((option: any) => (
+        <select {...register(field.name, { required })}>
+          <option value="">انتخاب کنید...</option>
+          {options.map((option) => (
             <option key={option.value} value={option.value}>
-              {option.label?.message || option.value}
+              {option.label}
             </option>
           ))}
         </select>
@@ -65,32 +73,18 @@ const FormField = ({ field, register }: Props) => {
     );
   }
 
-  
   if (field.type === "datePicker") {
     return (
       <div className="form-field">
         <label>{field.label?.message || field.name}</label>
         <input
           type="date"
-          {...register(field.name, { required: field.required })}
+          {...register(field.name, { required })}
         />
       </div>
     );
   }
 
-  
-  if (field.type === "captcha") {
-    console.warn(" CAPTCHA ", field);
-    return null;
-  }
-
-  
-  if (field.type === "widget") {
-    console.warn(" Unknown widget field →", field);
-    return null;
-  }
-
-  
   console.warn("Unknown field type:", field.type, field);
   return null;
 };
