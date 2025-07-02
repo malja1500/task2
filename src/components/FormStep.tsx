@@ -1,58 +1,45 @@
-
-
 import React from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import FormField from "./FormField";
-import { FormField as FormFieldType } from "../types/form";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 
 interface Props {
-  fields: FormFieldType[];
-  onNext: (stepData: any) => void; 
+  fields: any[];
+  onNext: (data: any) => void;
 }
 
-const FormStep: React.FC<Props> = ({ fields, onNext }) => {
-  const schema = z.object(
-    fields.reduce((acc, field) => {
-      if (field.required) {
-        acc[field.name] = z.string().min(1, `${field.label} الزامی است`);
-      } else {
-        acc[field.name] = z.string().optional();
-      }
-      return acc;
-    }, {} as any)
-  );
-
-  const methods = useForm({
-    resolver: zodResolver(schema),
-  });
+const FormStep = ({ fields = [], onNext }: Props) => {
+  const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: any) => {
-    onNext(data); 
+    console.log(" Form Step Submitted:", data);
+    onNext(data);
   };
 
-  
-  const grouped = fields.reduce((acc: Record<string, FormFieldType[]>, field) => {
-    const rowKey = field.row ? `row-${field.row}` : `row-${field.name}`;
-    if (!acc[rowKey]) acc[rowKey] = [];
-    acc[rowKey].push(field);
-    return acc;
-  }, {});
-
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        {Object.entries(grouped).map(([rowKey, rowFields]) => (
-          <div key={rowKey} style={{ display: "flex", gap: "1rem" }}>
-            {rowFields.map((field) => (
-              <FormField key={field.name} field={field} />
-            ))}
-          </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="form-step">
+      {fields
+        ?.filter(
+          (field) =>
+            !!field &&
+            !!field.name &&
+            !["widget", "captcha"].includes(field.type)
+        )
+        .map((field, index) => (
+          <FormField
+            key={field.name || `field-${index}`}
+            field={field}
+            register={register}
+          />
         ))}
-        <button type="submit">ادامه</button>
-      </form>
-    </FormProvider>
+
+      {!fields.some(
+        (field) => ["submit", "button"].includes(field?.type)
+      ) && (
+        <button type="submit" className="submit-btn">
+          ارسال
+        </button>
+      )}
+    </form>
   );
 };
 

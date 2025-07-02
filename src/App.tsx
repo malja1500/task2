@@ -1,11 +1,10 @@
-
-
 import React from 'react';
 import { DynamicForm } from './components/DynamicForm';
+import './styles/Form.css'; 
 
 function App() {
   return (
-    <div className="App">
+    <div className="form-container">
       <DynamicForm />
     </div>
   );

@@ -1,57 +1,98 @@
-
-
 import React from "react";
-import { useFormContext } from "react-hook-form";
-import { FormField as FormFieldType } from "../types/form";
 
 interface Props {
-  field: FormFieldType;
+  field: any;
+  register: any;
 }
 
-const FormField: React.FC<Props> = ({ field }) => {
-  const { register, watch, formState: { errors } } = useFormContext();
+const FormField = ({ field, register }: Props) => {
+
+  if (["text", "email", "password"].includes(field.type)) {
+    return (
+      <div className="form-field">
+        <label>{field.label?.message || field.name}</label>
+        <input
+          type={field.type}
+          {...register(field.name, { required: field.required })}
+        />
+      </div>
+    );
+  }
 
   
-  if (field.dependsOn) {
-    const dependsValue = watch(field.dependsOn.field);
-    if (dependsValue !== field.dependsOn.value) {
-      return null;
-    }
+  if (field.type === "checkbox") {
+    return (
+      <div className="form-field">
+        <label>
+          <input
+            type="checkbox"
+            {...register(field.name, { required: field.required })}
+          />{" "}
+          {field.label?.message || field.name}
+        </label>
+      </div>
+    );
   }
 
-  switch (field.type) {
-    case "text":
-    case "email":
-    case "password":
-      return (
-        <div>
-          <label>{field.label}</label>
-          <input {...register(field.name)} type={field.type} placeholder={field.placeholder} />
-          {errors[field.name] && <p>{errors[field.name]?.message as string}</p>}
-        </div>
-      );
-    case "checkbox":
-      return (
-        <div>
-          <label>
-            <input type="checkbox" {...register(field.name)} /> {field.label}
-          </label>
-        </div>
-      );
-    case "select":
-      return (
-        <div>
-          <label>{field.label}</label>
-          <select {...register(field.name)}>
-            {field.options?.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
-      );
-    default:
-      return null;
+  
+  if (field.type === "button" || field.type === "submit") {
+    return (
+      <div className="form-field">
+        <button type="submit">
+          {field.label?.message || "ارسال"}
+        </button>
+      </div>
+    );
   }
+
+  if (field.type === "select") {
+    const options = Array.isArray(field.options) ? field.options : [];
+    if (options.length === 0) {
+      console.warn(" WARNING: select field options fallback ", field);
+      return null;
+    }
+    return (
+      <div className="form-field">
+        <label>{field.label?.message || field.name}</label>
+        <select {...register(field.name, { required: field.required })}>
+          {options.map((option: any) => (
+            <option key={option.value} value={option.value}>
+              {option.label?.message || option.value}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  }
+
+  
+  if (field.type === "datePicker") {
+    return (
+      <div className="form-field">
+        <label>{field.label?.message || field.name}</label>
+        <input
+          type="date"
+          {...register(field.name, { required: field.required })}
+        />
+      </div>
+    );
+  }
+
+  
+  if (field.type === "captcha") {
+    console.warn(" CAPTCHA ", field);
+    return null;
+  }
+
+  
+  if (field.type === "widget") {
+    console.warn(" Unknown widget field →", field);
+    return null;
+  }
+
+  
+  console.warn("Unknown field type:", field.type, field);
+  return null;
 };
 
 export default FormField;

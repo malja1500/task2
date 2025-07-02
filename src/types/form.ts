@@ -1,22 +1,15 @@
+export interface FormField {
+  type: string;
+  name: string;
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+  row?: string;
+}
 
-
-export type FormField = {
-    type: 'text' | 'email' | 'password' | 'checkbox' | 'select' | 'button' | 'captcha' | 'otp';
-    name: string;
-    label: string;
-    placeholder?: string;
-    options?: { label: string; value: string }[];
-    required?: boolean;
-    dependsOn?: { field: string; value: string };
-    row?: number;
-  };
-  
-  export type FormStepType = {
+export interface FormConfig {
+  steps: {
     title: string;
     fields: FormField[];
-  };
-  
-  export type FormConfig = {
-    steps: FormStepType[];
-  };
-  
+  }[];
+}
